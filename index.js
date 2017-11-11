@@ -1,3 +1,3 @@
 require('dotenv').config();
 require('./server');
-require('./features/search');
+require('./app');

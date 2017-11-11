@@ -1,11 +1,12 @@
-const Telegraf = require('telegraf');
+const search = bot => {
+	bot.start(ctx => {
+		console.log('started:', ctx.from.id);
+		return ctx.reply('Welcome!');
+	});
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
-bot.start(ctx => {
-	console.log('started:', ctx.from.id);
-	return ctx.reply('Welcome!');
-});
+	bot.hears('Hi', ctx => ctx.reply('Hello!'));
 
-bot.hears('Hi', ctx => ctx.reply('Hello!'));
+	bot.startPolling();
+};
 
-bot.startPolling();
+export default search;
