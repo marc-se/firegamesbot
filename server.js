@@ -1,10 +1,12 @@
 var express = require('express');
 
-var app = express();
+const app = express();
+const port = process.env.PORT || 3030;
 
-var server = app.listen(process.env.PORT, function() {
-	var host = server.address().address;
-	var port = server.address().port;
+app.get('/', function(req, res) {
+	res.send('Server running ✅');
+});
 
-	console.log('Web server started at http://%s:%s', host, port);
+const server = app.listen(port, '0.0.0.0', function() {
+	console.info('Web server running at http://0.0.0.0:%s/ ✅', port);
 });
