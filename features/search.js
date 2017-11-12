@@ -35,7 +35,9 @@ const search = bot => {
 
 				if (searchResults.length > 0) {
 					ctx.reply(
-						`FOUND SOME GAMES 💁🏻\n-----\n${searchResults
+						`FOUND ${searchResults.length} ${searchResults.length > 1
+							? 'GAMES'
+							: 'GAME'} 💁🏻\n-----\n${searchResults
 							.toString()
 							.split(',')
 							.join('\n')}`
