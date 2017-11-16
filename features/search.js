@@ -3,34 +3,74 @@ import fb from '../initFirebase';
 
 const database = fb.database();
 const gamesRef = database.ref(`games/playstation4`);
-let allGames = [];
 
-let fetchedData = gamesRef.once('value', snap => {
-	let data = snap.val();
-	let games = [];
+const rootRef = fb.database().ref();
+const systemsRef = rootRef.child('games');
 
-	Object.keys(data).forEach(game => {
-		data[game].key = game;
-		games.push(data[game].title);
+let systemKeys = [];
+let systemRefs = [];
+let tmpGames = [];
+let gamesContainer = [];
+
+let fetchAllGames = systemsRef
+	.once('value', snap => {
+		let games = [];
+		let system = {};
+		snap.forEach(child => {
+			let key = child.key;
+			systemKeys.push(key);
+		});
+	})
+	.then(() => {
+		systemKeys.forEach(system => {
+			let systemRef = database.ref(`games/${system}`);
+			systemRefs.push(systemRef);
+		});
+	})
+	.then(() =>
+		Promise.all(gatherGames(systemRefs)).then(res => {
+			return gamesContainer;
+		})
+	);
+
+let gatherGames = systemRefs => {
+	let promises = systemRefs.map(systemRef => {
+		return systemRef
+			.once('value', snap => {
+				// reset temp games array
+				tmpGames = [];
+
+				let data = snap.val();
+
+				Object.keys(data).forEach(game => {
+					data[game].key = game;
+					tmpGames.push(data[game].title);
+				});
+			})
+			.then(() => gamesContainer.push(...tmpGames));
 	});
 
-	allGames = [...games];
-});
+	return promises;
+};
+
+function getSearchResults(games, message) {
+	return games.filter(game => game.toLowerCase().includes(message));
+}
 
 const search = bot => {
 	bot.start(ctx => {
-		console.log('started:', ctx.from.id);
+		//console.log('started:', ctx.from.id);
 		return ctx.reply('Welcome!');
 	});
 
 	bot.hears(/.*/gim, ctx => {
 		if ([ctx.message.text.length] < 3) {
-			console.log([ctx.message.text]);
+			//console.log([ctx.message.text]);
 			ctx.reply('Please search for at least 3 characters');
 		} else {
 			const message = [ctx.message.text].toString().toLowerCase();
 
-			fetchedData.then(() => {
+			fetchAllGames.then(allGames => {
 				let searchResults = getSearchResults(allGames, message);
 
 				if (searchResults.length > 0) {
@@ -51,9 +91,5 @@ const search = bot => {
 
 	bot.startPolling();
 };
-
-function getSearchResults(games, message) {
-	return games.filter(game => game.toLowerCase().includes(message));
-}
 
 export default search;
