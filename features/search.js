@@ -2,11 +2,10 @@ import * as firebase from 'firebase';
 import fb from '../initFirebase';
 
 const database = fb.database();
-const gamesRef = database.ref(`games/playstation4`);
-
 const rootRef = fb.database().ref();
 const systemsRef = rootRef.child('games');
 
+// TODO: put in scope, when possible
 let systemKeys = [];
 let systemRefs = [];
 let tmpGames = [];
