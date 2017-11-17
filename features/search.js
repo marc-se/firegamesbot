@@ -68,8 +68,8 @@ const search = bot => {
 				if (searchResults.length > 0) {
 					ctx.replyWithMarkdown(
 						`FOUND *${searchResults.length}* ${searchResults.length > 1
-							? '*GAMES*'
-							: '*GAME*'} 💁🏻\n-----\n${searchResults
+							? 'GAMES'
+							: 'GAME'} 💁🏻\n-----\n${searchResults
 							.toString()
 							.split(',')
 							.join('\n')}`
