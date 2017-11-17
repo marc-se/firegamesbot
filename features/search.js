@@ -13,8 +13,6 @@ let gamesContainer = [];
 
 let fetchAllGames = systemsRef
 	.once('value', snap => {
-		let games = [];
-		let system = {};
 		snap.forEach(child => {
 			let key = child.key;
 			systemKeys.push(key);
@@ -34,19 +32,14 @@ let fetchAllGames = systemsRef
 
 let gatherGames = systemRefs => {
 	let promises = systemRefs.map(systemRef => {
-		return systemRef
-			.once('value', snap => {
-				// reset temp games array
-				tmpGames = [];
+		return systemRef.once('value', snap => {
+			let data = snap.val();
 
-				let data = snap.val();
-
-				Object.keys(data).forEach(game => {
-					data[game].key = game;
-					tmpGames.push(data[game].title);
-				});
-			})
-			.then(() => gamesContainer.push(...tmpGames));
+			Object.keys(data).forEach(game => {
+				data[game].key = game;
+				gamesContainer.push(data[game].title);
+			});
+		});
 	});
 
 	return promises;
