@@ -66,10 +66,10 @@ const search = bot => {
 				let searchResults = getSearchResults(allGames, message);
 
 				if (searchResults.length > 0) {
-					ctx.reply(
-						`FOUND ${searchResults.length} ${searchResults.length > 1
-							? 'GAMES'
-							: 'GAME'} 💁🏻\n-----\n${searchResults
+					ctx.replyWithMarkdown(
+						`FOUND *${searchResults.length}* ${searchResults.length > 1
+							? '*GAMES*'
+							: '*GAME*'} 💁🏻\n-----\n${searchResults
 							.toString()
 							.split(',')
 							.join('\n')}`
