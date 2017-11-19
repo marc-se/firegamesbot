@@ -4,6 +4,7 @@ import fb from '../initFirebase';
 const database = fb.database();
 const rootRef = fb.database().ref();
 const systemsRef = rootRef.child('games');
+const OWNER_ID = process.env.OWNER_ID;
 
 // TODO: put in scope, when possible
 const systemKeys = [];
@@ -72,50 +73,55 @@ const search = (bot) => {
 		/.*/gim,
 		(ctx) => {
 			if (
-				[
-					ctx
-						.message
-						.text
-						.length,
-				] <
-				3
+				ctx.message.from.id.toString() ===
+				OWNER_ID
 			) {
-				// console.log([ctx.message.text]);
-				ctx.reply('Please search for at least 3 characters');
-			} else {
-				const message = [
-					ctx
-						.message
-						.text,
-				]
-					.toString()
-					.toLowerCase();
+				if (
+					[
+						ctx
+							.message
+							.text
+							.length,
+					] <
+					3
+				) {
+					// console.log([ctx.message.text]);
+					ctx.reply('Please search for at least 3 characters');
+				} else {
+					const message = [
+						ctx
+							.message
+							.text,
+					]
+						.toString()
+						.toLowerCase();
 
-				fetchAllGames.then((allGames) => {
-					const searchResults = getSearchResults(
-						allGames,
-						message,
-					);
+					fetchAllGames.then((allGames) => {
+						const searchResults = getSearchResults(
+							allGames,
+							message,
+						);
 
-					if (
-						searchResults.length >
-							0
-					) {
-						ctx.replyWithMarkdown(`FOUND *${
-							searchResults.length
-						}* ${
+						if (
 							searchResults.length >
-									1
-								? 'GAMES'
-								: 'GAME'
-						} 💁🏻\n-----\n${searchResults
-							.toString()
-							.split(',')
-							.join('\n')}`);
-					} else {
-						ctx.reply('NO GAMES FOUND! 😱');
-					}
-				});
+								0
+						) {
+							ctx.replyWithMarkdown(`FOUND *${
+								searchResults.length
+							}* ${
+								searchResults.length >
+										1
+									? 'GAMES'
+									: 'GAME'
+							} 💁🏻\n-----\n${searchResults
+								.toString()
+								.split(',')
+								.join('\n')}`);
+						} else {
+							ctx.reply('NO GAMES FOUND! 😱');
+						}
+					});
+				}
 			}
 		},
 	);
