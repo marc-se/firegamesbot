@@ -4,21 +4,18 @@
 	"description": "a telegram bot for searching video games in firegames",
 	"main": "index.js",
 	"scripts": {
-		"build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+		"build":
+			"rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
 		"start": "npm run build && NODE_ENV=production node dist/index.js",
-		"dev": "npm run build && NODE_ENV=development nodemon --exec babel-node index.js",
+		"dev":
+			"npm run build && NODE_ENV=development nodemon --exec babel-node index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/marc-se/firegamesbot.git"
 	},
-	"keywords": [
-		"firegames",
-		"firebase",
-		"telegram",
-		"bot"
-	],
+	"keywords": ["firegames", "firebase", "telegram", "bot"],
 	"author": "Marcel Sebald",
 	"license": "ISC",
 	"bugs": {
@@ -40,7 +37,6 @@
 		"babel-preset-stage-0": "^6.24.1",
 		"eslint": "4.9.0",
 		"eslint-config-airbnb": "^16.1.0",
-		"eslint-config-airbnb-base": "^12.1.0",
 		"eslint-plugin-import": "2.7.0",
 		"nodemon": "^1.12.1",
 		"rimraf": "^2.6.2"

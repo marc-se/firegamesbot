@@ -8,8 +8,8 @@ const OWNER_ID = process.env.OWNER_ID;
 
 const fetchStatistics = () => {
 	const systems = [];
-	systemsRef
-		.once('child_added', snap => {
+	return systemsRef
+		.once('value', snap => {
 			const data = snap.val();
 
 			Object.keys(data).forEach(system => {
@@ -21,12 +21,18 @@ const fetchStatistics = () => {
 
 const statistics = bot => {
 	bot.command('/statistics', ctx => {
-		console.log('👻', ctx.message.from.id);
 		if (OWNER_ID === ctx.message.from.id.toString()) {
-			fetchStatistics.then(systems => {
-				console.log(systems);
+			fetchStatistics().then(systems => {
+				const statistics = systems.map(system => {
+					return `${system.title}: ${system.games}`;
+				});
+				ctx.reply(
+					`Firegames Statistics 📊\n-----\n${statistics
+						.toString()
+						.split(',')
+						.join('\n')}`
+				);
 			});
-			ctx.reply('Firegames Statistics');
 		}
 	});
 	bot.startPolling();
