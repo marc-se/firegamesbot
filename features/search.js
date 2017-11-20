@@ -48,10 +48,7 @@ function getSearchResults(games, message) {
 }
 
 const search = bot => {
-	bot.start(ctx =>
-		// console.log('started:', ctx.from.id);
-		ctx.reply('Welcome!')
-	);
+	bot.start(ctx => ctx.reply('Welcome!')); // console.log('started:', ctx.from.id);
 
 	bot.hears(/.*/gim, ctx => {
 		if (ctx.message.from.id.toString() === OWNER_ID) {
