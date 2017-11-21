@@ -1,5 +1,4 @@
 {
-   "extends": "airbnb-base",
    "rules": {
       "indent": [2, "tab", { "SwitchCase": 1, "VariableDeclarator": 1 }],
       "no-tabs": 0,

@@ -24,9 +24,7 @@ const fetchAllGames = systemsRef
 			systemRefs.push(systemRef);
 		});
 	})
-	.then(() =>
-		Promise.all(gatherGames(systemRefs)).then(res => gamesContainer)
-	);
+	.then(() => Promise.all(gatherGames(systemRefs)).then(res => gamesContainer));
 
 let gatherGames = () => {
 	const promises = systemRefs.map(systemRef =>
@@ -77,8 +75,6 @@ const search = bot => {
 			}
 		}
 	});
-
 	bot.startPolling();
 };
-
 export default search;
