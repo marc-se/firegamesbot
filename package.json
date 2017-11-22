@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./yarn-debug.log --copy-files",
-		"start": "yarn run build && NODE_ENV=production yarn dist/index.js",
+		"start": "yarn run build && NODE_ENV=production node dist/index.js",
 		"dev": "yarn run build && NODE_ENV=development nodemon --exec babel-node index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
