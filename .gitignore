@@ -59,6 +59,3 @@ typings/
 
 # dist folder
 dist/
-
-# firebase apiKey
-apiKey.js
