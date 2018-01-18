@@ -7,6 +7,7 @@
 		"build": "babel lib -d dist --presets es2015,stage-0",
 		"start": "NODE_ENV=production nodemon lib/index.js --exec babel-node --presets es2015,stage-0",
 		"serve": "node dist/index.js",
+		"heroku-postbuild": "babel lib -d dist --presets es2015,stage-0",
 		"dev": "yarn run build && NODE_ENV=development nodemon --exec babel-node lib/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
