@@ -10,7 +10,7 @@ app.get('/', function(req, res) {
 
 setInterval(
 	function() {
-		http.get('http://<your app name>.herokuapp.com');
+		http.get(`http://${process.env.HEROKU_APP_NAME}.herokuapp.com`);
 	},
 	900000
 ); // wake up call every 15 minutes
