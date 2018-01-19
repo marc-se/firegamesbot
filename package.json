@@ -4,11 +4,11 @@
 	"description": "a telegram bot for searching video games in firegames",
 	"main": "index.js",
 	"scripts": {
-		"build": "babel lib -d dist --presets es2015,stage-0",
-		"start": "NODE_ENV=production nodemon lib/index.js --exec babel-node --presets es2015,stage-0",
+		"build": "babel index.js -d dist --presets es2015,stage-0",
+		"start": "NODE_ENV=production nodemon index.js --exec babel-node --presets es2015,stage-0",
 		"serve": "node dist/index.js",
-		"heroku-postbuild": "babel lib -d dist --presets es2015,stage-0",
-		"dev": "yarn run build && NODE_ENV=development nodemon --exec babel-node lib/index.js",
+		"heroku-postbuild": "babel index.js -d dist --presets es2015,stage-0",
+		"dev": "yarn run build && NODE_ENV=development nodemon --exec babel-node index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {
