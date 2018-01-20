@@ -11,3 +11,5 @@ Statistics(bot);
 
 // hears
 Search(bot);
+
+bot.startPolling();

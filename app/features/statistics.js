@@ -26,16 +26,10 @@ const statistics = bot => {
 				const statistics = systems.map(system => {
 					return `${system.title}: ${system.games}`;
 				});
-				ctx.reply(
-					`Firegames Statistics 📊\n-----\n${statistics
-						.toString()
-						.split(',')
-						.join('\n')}`
-				);
+				ctx.reply(`Firegames Statistics 📊\n-----\n${statistics.toString().split(',').join('\n')}`);
 			});
 		}
 	});
-	bot.startPolling();
 };
 
 export default statistics;

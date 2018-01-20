@@ -27,16 +27,14 @@ const fetchAllGames = systemsRef
 	.then(() => Promise.all(gatherGames(systemRefs)).then(res => gamesContainer));
 
 let gatherGames = () => {
-	const promises = systemRefs.map(systemRef =>
-		systemRef.once('value', snap => {
-			const data = snap.val();
+	const promises = systemRefs.map(systemRef => systemRef.once('value', snap => {
+		const data = snap.val();
 
-			Object.keys(data).forEach(game => {
-				data[game].key = game;
-				gamesContainer.push(data[game].title);
-			});
-		})
-	);
+		Object.keys(data).forEach(game => {
+			data[game].key = game;
+			gamesContainer.push(data[game].title);
+		});
+	}));
 
 	return promises;
 };
@@ -50,23 +48,20 @@ const search = bot => {
 
 	bot.hears(/.*/gim, ctx => {
 		if (ctx.message.from.id.toString() === OWNER_ID) {
-			if ([ctx.message.text.length] < 3) {
+			if ([ ctx.message.text.length ] < 3) {
 				// console.log([ctx.message.text]);
 				ctx.reply('Please search for at least 3 characters');
 			} else {
-				const message = [ctx.message.text].toString().toLowerCase();
+				const message = [ ctx.message.text ].toString().toLowerCase();
 
 				fetchAllGames.then(allGames => {
 					const searchResults = getSearchResults(allGames, message);
 
 					if (searchResults.length > 0) {
 						ctx.replyWithMarkdown(
-							`FOUND *${searchResults.length}* ${
-								searchResults.length > 1 ? 'GAMES' : 'GAME'
-							} 💁🏻\n-----\n${searchResults
-								.toString()
-								.split(',')
-								.join('\n')}`
+							`FOUND *${searchResults.length}* ${searchResults.length > 1
+								? 'GAMES'
+								: 'GAME'} 💁🏻\n-----\n${searchResults.toString().split(',').join('\n')}`
 						);
 					} else {
 						ctx.reply('NO GAMES FOUND! 😱');
@@ -75,6 +70,5 @@ const search = bot => {
 			}
 		}
 	});
-	bot.startPolling();
 };
 export default search;
