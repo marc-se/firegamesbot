@@ -1,9 +1,9 @@
-import * as firebase from 'firebase'; // eslint-disable-line
-import fb from '../initFirebase';
+import * as firebase from "firebase"; // eslint-disable-line
+import fb from "../initFirebase";
 
 const database = fb.database();
 const rootRef = fb.database().ref();
-const systemsRef = rootRef.child('games');
+const systemsRef = rootRef.child("games");
 const OWNER_ID = process.env.OWNER_ID;
 
 // TODO: put in scope, when possible
@@ -12,7 +12,7 @@ const systemRefs = [];
 const gamesContainer = [];
 
 const fetchAllGames = systemsRef
-	.once('value', snap => {
+	.once("value", snap => {
 		snap.forEach(child => {
 			const { key } = child;
 			systemKeys.push(key);
@@ -28,7 +28,7 @@ const fetchAllGames = systemsRef
 
 let gatherGames = () => {
 	const promises = systemRefs.map(systemRef =>
-		systemRef.once('value', snap => {
+		systemRef.once("value", snap => {
 			const data = snap.val();
 
 			Object.keys(data).forEach(game => {
@@ -46,13 +46,14 @@ function getSearchResults(games, message) {
 }
 
 const search = bot => {
-	bot.start(ctx => ctx.reply('Welcome!')); // console.log('started:', ctx.from.id);
+	bot.start(ctx => ctx.reply("Welcome!"));
+
+	bot.hears("hi", ctx => ctx.reply("Hey there"));
 
 	bot.hears(/^(?!.*🕹)/gim, ctx => {
 		if (ctx.message.from.id.toString() === OWNER_ID) {
 			if ([ctx.message.text.length] < 3) {
-				// console.log([ctx.message.text]);
-				ctx.reply('Please search for at least 3 characters');
+				ctx.reply("Please search for at least 3 characters");
 			} else {
 				const message = [ctx.message.text].toString().toLowerCase();
 
@@ -61,15 +62,13 @@ const search = bot => {
 
 					if (searchResults.length > 0) {
 						ctx.replyWithMarkdown(
-							`FOUND *${searchResults.length}* ${
-								searchResults.length > 1 ? 'GAMES' : 'GAME'
-							} 💁🏻\n-----\n${searchResults
+							`FOUND *${searchResults.length}* ${searchResults.length > 1 ? "GAMES" : "GAME"} 💁🏻\n-----\n${searchResults
 								.toString()
-								.split(',')
-								.join('\n')}`
+								.split(",")
+								.join("\n")}`
 						);
 					} else {
-						ctx.reply('NO GAMES FOUND! 😱');
+						ctx.reply("NO GAMES FOUND! 😱");
 					}
 				});
 			}
