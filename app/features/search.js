@@ -1,4 +1,3 @@
-import * as firebase from "firebase"; // eslint-disable-line
 import fb from "../initFirebase";
 
 const database = fb.database();
@@ -6,7 +5,7 @@ const rootRef = fb.database().ref();
 const systemsRef = rootRef.child("games");
 const OWNER_ID = process.env.OWNER_ID;
 
-// TODO: put in scope, when possible
+// TODO: put in scope, if possible
 const systemKeys = [];
 const systemRefs = [];
 const gamesContainer = [];
@@ -42,20 +41,26 @@ let gatherGames = () => {
 };
 
 function getSearchResults(games, message) {
-	return games.filter(game => game.toLowerCase().includes(message));
+	return games.filter(game => {
+		console.log(game);
+		try {
+			return game.toLowerCase().includes(message);
+		} catch (e) {
+			console.log("Error occured 🔥", e);
+		}
+	});
 }
 
 const search = bot => {
 	bot.start(ctx => ctx.reply("Welcome!"));
-
-	bot.hears("hi", ctx => ctx.reply("Hey there"));
 
 	bot.hears(/^(?!.*🕹)/gim, ctx => {
 		if (ctx.message.from.id.toString() === OWNER_ID) {
 			if ([ctx.message.text.length] < 3) {
 				ctx.reply("Please search for at least 3 characters");
 			} else {
-				const message = [ctx.message.text].toString().toLowerCase();
+				const { text } = ctx.message;
+				const message = text.toLowerCase();
 
 				fetchAllGames.then(allGames => {
 					const searchResults = getSearchResults(allGames, message);

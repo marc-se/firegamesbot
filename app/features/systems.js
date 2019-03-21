@@ -1,18 +1,17 @@
-import * as firebase from 'firebase'; // eslint-disable-line
-import fb from '../initFirebase';
+import fb from "../initFirebase";
 
-const { Extra, Markup } = require('telegraf');
+const { Extra, Markup } = require("telegraf");
 
 const database = fb.database();
 const rootRef = fb.database().ref();
-const systemsRef = rootRef.child('systems');
+const systemsRef = rootRef.child("systems");
 const OWNER_ID = process.env.OWNER_ID;
 
 const fetchSystems = () => {
 	const systems = [];
 
 	return systemsRef
-		.once('value', snap => {
+		.once("value", snap => {
 			const data = snap.val();
 
 			Object.keys(data).forEach(system => {
@@ -36,7 +35,7 @@ function replyWithSystemData(ctx, systems, bot) {
 		const systemRef = database.ref(`games/${requestedSystem.url}`);
 
 		const fetchGames = systemRef
-			.once('value', snap => {
+			.once("value", snap => {
 				const data = snap.val();
 				Object.keys(data).forEach(game => {
 					data[game].key = game;
@@ -44,15 +43,12 @@ function replyWithSystemData(ctx, systems, bot) {
 				});
 			})
 			.then(() => {
-				ctx.replyWithMarkdown(
-					`Here are your *${cleanSystemString}* Games 😘`,
-					Extra.markup(Markup.removeKeyboard())
-				);
+				ctx.replyWithMarkdown(`Here are your *${cleanSystemString}* Games 😘`, Extra.markup(Markup.removeKeyboard()));
 				ctx.reply(
 					`${games
 						.toString()
-						.split(',')
-						.join('\n')}`,
+						.split(",")
+						.join("\n")}`,
 					Extra.markup(Markup.removeKeyboard())
 				);
 			});
@@ -60,7 +56,7 @@ function replyWithSystemData(ctx, systems, bot) {
 }
 
 const systems = bot => {
-	bot.command('/gamesbysystem', ctx => {
+	bot.command("/gamesbysystem", ctx => {
 		if (OWNER_ID === ctx.message.from.id.toString()) {
 			fetchSystems().then(systems => {
 				const systemTitles = systems.map(system => {
@@ -76,7 +72,7 @@ const systems = bot => {
 				});
 
 				return ctx.reply(
-					'Please select which games you would like to see 🕹',
+					"Please select which games you would like to see 🕹",
 					Extra.markup(Markup.keyboard(systemTitles))
 				);
 			});
