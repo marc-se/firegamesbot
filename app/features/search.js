@@ -5,6 +5,9 @@ const rootRef = fb.database().ref();
 const systemsRef = rootRef.child("games");
 const OWNER_ID = process.env.OWNER_ID;
 
+const NodeCache = require("node-cache");
+const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
+
 // TODO: put in scope, if possible
 const systemKeys = [];
 const systemRefs = [];
@@ -23,7 +26,13 @@ const fetchAllGames = systemsRef
 			systemRefs.push(systemRef);
 		});
 	})
-	.then(() => Promise.all(gatherGames(systemRefs)).then(res => gamesContainer));
+	.then(() =>
+		Promise.all(gatherGames(systemRefs)).then(res => {
+			// cache all games for 5 minutes
+			botCache.set("allGames", gamesContainer);
+			return gamesContainer;
+		})
+	);
 
 let gatherGames = () => {
 	const promises = systemRefs.map(systemRef =>
@@ -42,13 +51,25 @@ let gatherGames = () => {
 
 function getSearchResults(games, message) {
 	return games.filter(game => {
-		console.log(game);
 		try {
 			return game.toLowerCase().includes(message);
 		} catch (e) {
 			console.log("Error occured 🔥", e);
 		}
 	});
+}
+
+function botReply(result, ctx) {
+	if (result.length > 0) {
+		ctx.replyWithMarkdown(
+			`FOUND *${result.length}* ${result.length > 1 ? "GAMES" : "GAME"} 💁🏻\n-----\n${result
+				.toString()
+				.split(",")
+				.join("\n")}`
+		);
+	} else {
+		ctx.reply("NO GAMES FOUND! 😱");
+	}
 }
 
 const search = bot => {
@@ -62,20 +83,22 @@ const search = bot => {
 				const { text } = ctx.message;
 				const message = text.toLowerCase();
 
-				fetchAllGames.then(allGames => {
-					const searchResults = getSearchResults(allGames, message);
+				const cachedGames = botCache.get("allGames");
+				let searchResults = [];
+				console.log("cached games ⭐️", cachedGames);
 
-					if (searchResults.length > 0) {
-						ctx.replyWithMarkdown(
-							`FOUND *${searchResults.length}* ${searchResults.length > 1 ? "GAMES" : "GAME"} 💁🏻\n-----\n${searchResults
-								.toString()
-								.split(",")
-								.join("\n")}`
-						);
-					} else {
-						ctx.reply("NO GAMES FOUND! 😱");
-					}
-				});
+				if (cachedGames == undefined) {
+					console.log("fetch all games 🔥");
+
+					fetchAllGames.then(allGames => {
+						searchResults = getSearchResults(allGames, message);
+						botReply(searchResults, ctx);
+					});
+				} else {
+					console.log("use cache ✅");
+					searchResults = getSearchResults(cachedGames, message);
+					botReply(searchResults, ctx);
+				}
 			}
 		}
 	});
