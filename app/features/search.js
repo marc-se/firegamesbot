@@ -8,7 +8,6 @@ const OWNER_ID = process.env.OWNER_ID;
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
 
-// TODO: put in scope, if possible
 const systemKeys = [];
 const systemRefs = [];
 const gamesContainer = [];
@@ -85,17 +84,13 @@ const search = bot => {
 
 				const cachedGames = botCache.get("allGames");
 				let searchResults = [];
-				console.log("cached games ⭐️", cachedGames);
 
 				if (cachedGames == undefined) {
-					console.log("fetch all games 🔥");
-
 					fetchAllGames.then(allGames => {
 						searchResults = getSearchResults(allGames, message);
 						botReply(searchResults, ctx);
 					});
 				} else {
-					console.log("use cache ✅");
 					searchResults = getSearchResults(cachedGames, message);
 					botReply(searchResults, ctx);
 				}
