@@ -12,26 +12,27 @@ const systemKeys = [];
 const systemRefs = [];
 const gamesContainer = [];
 
-const fetchAllGames = systemsRef
-	.once("value", snap => {
-		snap.forEach(child => {
-			const { key } = child;
-			systemKeys.push(key);
-		});
-	})
-	.then(() => {
-		systemKeys.forEach(system => {
-			const systemRef = database.ref(`games/${system}`);
-			systemRefs.push(systemRef);
-		});
-	})
-	.then(() =>
-		Promise.all(gatherGames(systemRefs)).then(res => {
-			// cache all games for 5 minutes
-			botCache.set("allGames", gamesContainer);
-			return gamesContainer;
+const fetchAllGames = () =>
+	systemsRef
+		.once("value", snap => {
+			snap.forEach(child => {
+				const { key } = child;
+				systemKeys.push(key);
+			});
 		})
-	);
+		.then(() => {
+			systemKeys.forEach(system => {
+				const systemRef = database.ref(`games/${system}`);
+				systemRefs.push(systemRef);
+			});
+		})
+		.then(() =>
+			Promise.all(gatherGames(systemRefs)).then(res => {
+				// cache all games for 5 minutes
+				botCache.set("allGames", gamesContainer);
+				return gamesContainer;
+			})
+		);
 
 let gatherGames = () => {
 	const promises = systemRefs.map(systemRef =>
@@ -86,7 +87,7 @@ const search = bot => {
 				let searchResults = [];
 
 				if (cachedGames == undefined) {
-					fetchAllGames.then(allGames => {
+					fetchAllGames().then(allGames => {
 						searchResults = getSearchResults(allGames, message);
 						botReply(searchResults, ctx);
 					});
