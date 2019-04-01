@@ -22,6 +22,10 @@
 		"telegram",
 		"bot"
 	],
+	"engines": {
+		"node": "11.1.0",
+		"npm": "6.x"
+	  }
 	"author": "Marcel Sebald",
 	"license": "ISC",
 	"bugs": {
