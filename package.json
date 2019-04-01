@@ -8,7 +8,6 @@
 		"start": "NODE_ENV=production node dist/app/index.js",
 		"serve": "node dist/index.js",
 		"clean": "rimraf dist",
-		"heroku-postbuild": "rimraf dist babel ./app --out-dir dist",
 		"dev": "npm run build && NODE_ENV=development nodemon --exec babel-node app/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
