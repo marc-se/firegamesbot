@@ -4,11 +4,11 @@
 	"description": "a telegram bot for searching video games in firegames",
 	"main": "index.js",
 	"scripts": {
-		"build": "babel . --ignore node_modules,app/dist -d app/dist",
+		"build": "babel . --ignore node_modules,dist -d dist",
 		"start": "NODE_ENV=production node dist/app/index.js",
 		"serve": "node dist/index.js",
 		"clean": "rm -rf dist && mkdir dist",
-		"heroku-postbuild": "babel app/*.js app/features/*.js -d app/dist",
+		"heroku-postbuild": "babel app/*.js app/features/*.js -d dist",
 		"dev": "npm run build && NODE_ENV=development nodemon --exec babel-node app/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
