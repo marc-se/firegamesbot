@@ -77,6 +77,8 @@ const systems = bot => {
 					Extra.markup(Markup.keyboard(systemTitles))
 				);
 			});
+		} else {
+			ctx.reply("You're not an authorized user! 🙅🏼");
 		}
 	});
 };

@@ -132,6 +132,8 @@ const search = bot => {
 					botReply(reply, ctx);
 				}
 			}
+		} else {
+			ctx.reply("You're not an authorized user! 🙅🏼");
 		}
 	});
 };

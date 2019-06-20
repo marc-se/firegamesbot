@@ -33,6 +33,8 @@ const statistics = bot => {
 						.join("\n")}`
 				);
 			});
+		} else {
+			ctx.reply("You're not an authorized user! 🙅🏼");
 		}
 	});
 };
