@@ -3,7 +3,7 @@ import fb from "../initFirebase";
 const database = fb.database();
 const rootRef = database.ref();
 const systemsRef = rootRef.child("systems");
-const OWNER_ID = process.env.OWNER_ID;
+import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
 const fetchStatistics = () => {
 	const systems = [];
@@ -20,7 +20,8 @@ const fetchStatistics = () => {
 
 const statistics = bot => {
 	bot.command("/statistics", ctx => {
-		if (OWNER_ID === ctx.message.from.id.toString()) {
+		const userId = ctx.message.from.id.toString();
+		if (isAuthorizedUser(userId)) {
 			fetchStatistics().then(systems => {
 				const statistics = systems.map(system => {
 					return `${system.title}: ${system.games}`;

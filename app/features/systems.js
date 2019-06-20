@@ -5,7 +5,7 @@ const { Extra, Markup } = require("telegraf");
 const database = fb.database();
 const rootRef = fb.database().ref();
 const systemsRef = rootRef.child("systems");
-const OWNER_ID = process.env.OWNER_ID;
+import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
 const fetchSystems = () => {
 	const systems = [];
@@ -57,7 +57,8 @@ function replyWithSystemData(ctx, systems, bot) {
 
 const systems = bot => {
 	bot.command("/gamesbysystem", ctx => {
-		if (OWNER_ID === ctx.message.from.id.toString()) {
+		const userId = ctx.message.from.id.toString();
+		if (isAuthorizedUser(userId)) {
 			fetchSystems().then(systems => {
 				const systemTitles = systems.map(system => {
 					return `${system.title} 🕹`;
