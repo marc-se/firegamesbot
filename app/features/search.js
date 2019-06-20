@@ -4,7 +4,7 @@ const database = fb.database();
 const rootRef = fb.database().ref();
 const gamesRef = rootRef.child("games");
 const systemsRef = rootRef.child("systems");
-const OWNER_ID = process.env.OWNER_ID;
+import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
@@ -98,7 +98,8 @@ const search = bot => {
 	bot.start(ctx => ctx.reply("Welcome!"));
 
 	bot.hears(/^(?!.*🕹)/gim, ctx => {
-		if (ctx.message.from.id.toString() === OWNER_ID) {
+		const userId = ctx.message.from.id.toString();
+		if (isAuthorizedUser(userId)) {
 			if ([ctx.message.text.length] < 3) {
 				ctx.reply("Please search for at least 3 characters");
 			} else {
@@ -131,6 +132,8 @@ const search = bot => {
 					botReply(reply, ctx);
 				}
 			}
+		} else {
+			ctx.reply("You're not an authorized user! 🙅🏼");
 		}
 	});
 };
