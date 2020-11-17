@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import "firebase/database";
 
 const database = firebase.database();
 const rootRef = firebase.database().ref();
