@@ -1,68 +1,68 @@
 {
-	"name": "firegamesbot",
-	"version": "1.0.0",
-	"description": "a telegram bot for searching video games in firegames",
-	"main": "index.js",
-	"scripts": {
-		"build": "babel ./app --out-dir dist",
-		"start": "NODE_ENV=production node dist/app/index.js",
-		"serve": "node dist/index.js",
-		"clean": "rimraf dist",
-		"dev": "npm run build && NODE_ENV=development nodemon --exec babel-node app/index.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/marc-se/firegamesbot.git"
-	},
-	"keywords": [
-		"firegames",
-		"firebase",
-		"telegram",
-		"bot"
-	],
-	"engines": {
-		"node": "11.1.0",
-		"npm": "6.x"
-	},
-	"author": "Marcel Sebald",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/marc-se/firegamesbot/issues"
-	},
-	"homepage": "https://github.com/marc-se/firegamesbot#readme",
-	"dependencies": {
-		"dotenv": "^7.0.0",
-		"express": "^4.16.4",
-		"firebase": "^5.9.2",
-		"node-cache": "^4.2.0",
-		"nodemon": "^1.18.10",
-		"telegraf": "^3.28.0"
-	},
-	"devDependencies": {
-		"@babel/cli": "^7.0.0",
-		"@babel/core": "^7.0.0",
-		"@babel/node": "^7.0.0",
-		"@babel/plugin-proposal-class-properties": "^7.0.0",
-		"@babel/plugin-proposal-decorators": "^7.0.0",
-		"@babel/plugin-proposal-do-expressions": "^7.0.0",
-		"@babel/plugin-proposal-export-default-from": "^7.0.0",
-		"@babel/plugin-proposal-export-namespace-from": "^7.0.0",
-		"@babel/plugin-proposal-function-bind": "^7.0.0",
-		"@babel/plugin-proposal-function-sent": "^7.0.0",
-		"@babel/plugin-proposal-json-strings": "^7.0.0",
-		"@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
-		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
-		"@babel/plugin-proposal-numeric-separator": "^7.0.0",
-		"@babel/plugin-proposal-optional-chaining": "^7.0.0",
-		"@babel/plugin-proposal-pipeline-operator": "^7.0.0",
-		"@babel/plugin-proposal-throw-expressions": "^7.0.0",
-		"@babel/plugin-syntax-dynamic-import": "^7.0.0",
-		"@babel/plugin-syntax-import-meta": "^7.0.0",
-		"@babel/polyfill": "^7.0.0",
-		"@babel/preset-env": "^7.0.0",
-		"eslint": "^5.16.0",
-		"eslint-plugin-import": "2.16.0",
-		"rimraf": "^2.6.3"
-	}
+  "name": "firegamesbot",
+  "version": "1.0.0",
+  "description": "a telegram bot for searching video games in firegames",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel ./app --out-dir dist",
+    "start": "NODE_ENV=production node dist/app/index.js",
+    "serve": "node dist/index.js",
+    "clean": "rimraf dist",
+    "dev": "npm run build && NODE_ENV=development nodemon --exec babel-node app/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marc-se/firegamesbot.git"
+  },
+  "keywords": [
+    "firegames",
+    "firebase",
+    "telegram",
+    "bot"
+  ],
+  "engines": {
+    "node": "11.1.0",
+    "npm": "6.x"
+  },
+  "author": "Marcel Sebald",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marc-se/firegamesbot/issues"
+  },
+  "homepage": "https://github.com/marc-se/firegamesbot#readme",
+  "dependencies": {
+    "dotenv": "8.2.0",
+    "express": "4.17.1",
+    "firebase": "8.0.2",
+    "node-cache": "5.1.2",
+    "nodemon": "2.0.6",
+    "telegraf": "3.38.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.12.1",
+    "@babel/core": "7.12.3",
+    "@babel/node": "7.12.6",
+    "@babel/plugin-proposal-class-properties": "7.12.1",
+    "@babel/plugin-proposal-decorators": "7.12.1",
+    "@babel/plugin-proposal-do-expressions": "7.12.1",
+    "@babel/plugin-proposal-export-default-from": "7.12.1",
+    "@babel/plugin-proposal-export-namespace-from": "7.12.1",
+    "@babel/plugin-proposal-function-bind": "7.12.1",
+    "@babel/plugin-proposal-function-sent": "7.12.1",
+    "@babel/plugin-proposal-json-strings": "7.12.1",
+    "@babel/plugin-proposal-logical-assignment-operators": "7.12.1",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "7.12.1",
+    "@babel/plugin-proposal-numeric-separator": "7.12.5",
+    "@babel/plugin-proposal-optional-chaining": "7.12.1",
+    "@babel/plugin-proposal-pipeline-operator": "7.12.1",
+    "@babel/plugin-proposal-throw-expressions": "7.12.1",
+    "@babel/plugin-syntax-dynamic-import": "7.8.3",
+    "@babel/plugin-syntax-import-meta": "7.10.4",
+    "@babel/polyfill": "7.12.1",
+    "@babel/preset-env": "7.12.1",
+    "eslint": "7.13.0",
+    "eslint-plugin-import": "2.22.1",
+    "rimraf": "3.0.2"
+  }
 }
