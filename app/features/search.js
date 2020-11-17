@@ -89,7 +89,7 @@ function getGamesWithShortName(games, systems) {
   let gamesWithShortName = [];
   games.map((game) => {
     const systemNode = systems.find((system) => system.url === game.parent);
-    gamesWithShortName.push(`${game.title} (${systemNode.alias})`);
+    gamesWithShortName.push(`- ${game.title} (${systemNode.alias})`);
   });
   return gamesWithShortName;
 }

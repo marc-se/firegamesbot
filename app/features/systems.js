@@ -51,7 +51,7 @@ function replyWithSystemData(ctx, systems, bot) {
           Extra.markup(Markup.removeKeyboard())
         );
         ctx.reply(
-          `${games.toString().split(",").join("\n")}`,
+          `- ${games.toString().split(",").join("\n- ")}`,
           Extra.markup(Markup.removeKeyboard())
         );
       });
