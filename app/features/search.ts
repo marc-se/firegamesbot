@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/database";
+import idx from "idx";
 
 const database = firebase.database();
 const rootRef = firebase.database().ref();
@@ -7,7 +8,7 @@ const gamesRef = rootRef.child("games");
 const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
-import type { GameReference } from "../types";
+import type { GameReference, Game, System } from "../types";
 
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
@@ -69,7 +70,7 @@ let gatherGames = () => {
   return promises;
 };
 
-function getSearchResults(games, message) {
+function getSearchResults(games: Game[], message: string) {
   return games.filter((game) => {
     try {
       return game.title.toLowerCase().includes(message);
@@ -79,7 +80,7 @@ function getSearchResults(games, message) {
   });
 }
 
-function botReply(result, ctx) {
+function botReply(result: string[], ctx: any) {
   if (result.length > 0) {
     ctx.replyWithMarkdown(
       `FOUND *${result.length}* ${
@@ -91,22 +92,26 @@ function botReply(result, ctx) {
   }
 }
 
-function getGamesWithShortName(games, systems) {
-  let gamesWithShortName = [];
+function getGamesWithShortName(games: GameReference[], systems: System[]) {
+  let gamesWithShortName: string[] = [];
   games.map((game) => {
     const systemNode = systems.find((system) => system.url === game.parent);
-    gamesWithShortName.push(`- ${game.title} (${systemNode.alias})`);
+    if (systemNode && systemNode.alias) {
+      gamesWithShortName.push(`- ${game.title} (${systemNode.alias})`);
+    }
   });
   return gamesWithShortName;
 }
 
-const search = (bot) => {
-  bot.start((ctx) => ctx.reply("Welcome!"));
+const search = (bot: any) => {
+  bot.start((ctx: any) => ctx.reply("Welcome!"));
 
-  bot.hears(/^(?!.*🕹)/gim, (ctx) => {
+  bot.hears(/^(?!.*🕹)/gim, (ctx: any) => {
     const userId = ctx.message.from.id.toString();
     if (isAuthorizedUser(userId)) {
-      if ([ctx.message.text.length] < 3) {
+      // TODO: check if messageLength is working
+      const messageLength = idx(ctx, (_) => _.message.text.length) || 0;
+      if (messageLength < 3) {
         ctx.reply("Please search for at least 3 characters");
       } else {
         const { text } = ctx.message;

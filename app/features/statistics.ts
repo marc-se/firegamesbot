@@ -5,9 +5,10 @@ const database = firebase.database();
 const rootRef = database.ref();
 const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
+import type { System } from "../types";
 
 const fetchStatistics = () => {
-  const systems = [];
+  const systems: System[] = [];
   return systemsRef
     .once("value", (snap) => {
       const data = snap.val();
