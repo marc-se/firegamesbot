@@ -19,8 +19,8 @@ const fetchStatistics = () => {
     .then(() => systems);
 };
 
-const statistics = (bot) => {
-  bot.command("/statistics", (ctx) => {
+const statistics = (bot: any) => {
+  bot.command("/statistics", (ctx: any) => {
     const userId = ctx.message.from.id.toString();
     if (isAuthorizedUser(userId)) {
       fetchStatistics().then((systems) => {

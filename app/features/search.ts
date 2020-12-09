@@ -7,19 +7,23 @@ const gamesRef = rootRef.child("games");
 const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
+import type { GameReference } from "../types";
+
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
 
-let systemKeys = [];
-let systemRefs = [];
-let gamesContainer = [];
+let systemKeys: string[] = [];
+let systemRefs: firebase.database.Reference[] = [];
+let gamesContainer: GameReference[] = [];
 
 const fetchAllGames = () =>
   gamesRef
     .once("value", (snap) => {
       snap.forEach((child) => {
         const { key } = child;
-        systemKeys.push(key);
+        if (key) {
+          systemKeys.push(key);
+        }
       });
     })
     .then(() => {
@@ -29,7 +33,7 @@ const fetchAllGames = () =>
       });
     })
     .then(() =>
-      Promise.all(gatherGames(systemRefs)).then((res) => {
+      Promise.all(gatherGames()).then((res) => {
         // cache all games for 5 minutes
         return gamesContainer;
       })
@@ -37,7 +41,7 @@ const fetchAllGames = () =>
 
 // TODO: put in utils function
 const fetchAllShortNames = () => {
-  let systems = [];
+  let systems: string[] = [];
   return systemsRef
     .once("value", (snap) => {
       const data = snap.val();
@@ -55,7 +59,9 @@ let gatherGames = () => {
       const data = snap.val();
       Object.keys(data).forEach((game) => {
         data[game].key = game;
-        gamesContainer.push({ title: data[game].title, parent: snap.key });
+        if (snap.key) {
+          gamesContainer.push({ title: data[game].title, parent: snap.key });
+        }
       });
     })
   );

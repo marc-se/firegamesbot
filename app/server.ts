@@ -1,10 +1,10 @@
-const express = require("express");
+import express, { Request, Response } from "express";
 import { connect } from "./db/connect";
 
 const app = express();
-const port = process.env.PORT || 3030;
+const port: number = parseInt(<string>process.env.PORT, 10) || 3030;
 
-app.get("/", function (req, res) {
+app.get("/", function (req: Request, res: Response) {
   res.send("Server running ✅");
 });
 

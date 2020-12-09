@@ -1,14 +1,14 @@
 {
   "name": "firegamesbot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "a telegram bot for searching video games in firegames",
   "main": "index.js",
   "scripts": {
-    "build": "babel ./app --out-dir dist",
-    "start": "NODE_ENV=production node dist/app/index.js",
+    "build": "tsc",
+    "start": "NODE_ENV=production node dist/index.js",
     "serve": "node dist/index.js",
     "clean": "rimraf dist",
-    "dev": "npm run build && NODE_ENV=development nodemon --exec babel-node app/index.js",
+    "dev": "npm run build && NODE_ENV=development nodemon --exec babel-node app/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +22,7 @@
     "bot"
   ],
   "engines": {
-    "node": "11.1.0",
+    "node": "14.15.1",
     "npm": "6.x"
   },
   "author": "Marcel Sebald",
@@ -32,12 +32,14 @@
   },
   "homepage": "https://github.com/marc-se/firegamesbot#readme",
   "dependencies": {
+    "@types/express": "^4.17.9",
     "dotenv": "8.2.0",
     "express": "4.17.1",
     "firebase": "8.0.2",
     "node-cache": "5.1.2",
     "nodemon": "2.0.6",
-    "telegraf": "3.38.0"
+    "telegraf": "3.38.0",
+    "typescript": "4.0.5"
   },
   "devDependencies": {
     "@babel/cli": "7.12.1",
@@ -61,6 +63,8 @@
     "@babel/plugin-syntax-import-meta": "7.10.4",
     "@babel/polyfill": "7.12.1",
     "@babel/preset-env": "7.12.1",
+    "@babel/preset-typescript": "7.12.7",
+    "babel-preset-minify": "0.5.1",
     "eslint": "7.13.0",
     "eslint-plugin-import": "2.22.1",
     "rimraf": "3.0.2"
