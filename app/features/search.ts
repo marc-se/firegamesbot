@@ -42,7 +42,7 @@ const fetchAllGames = () =>
 
 // TODO: put in utils function
 const fetchAllShortNames = () => {
-  let systems: string[] = [];
+  let systems: System[] = [];
   return systemsRef
     .once("value", (snap) => {
       const data = snap.val();
@@ -70,7 +70,7 @@ let gatherGames = () => {
   return promises;
 };
 
-function getSearchResults(games: Game[], message: string) {
+function getSearchResults(games: GameReference[], message: string) {
   return games.filter((game) => {
     try {
       return game.title.toLowerCase().includes(message);
@@ -119,7 +119,7 @@ const search = (bot: any) => {
 
         const cachedGames = botCache.get("allGames");
         const cachedSystems = botCache.get("allSystems");
-        let searchResults = [];
+        let searchResults: GameReference[] = [];
 
         if (cachedGames == undefined || cachedSystems == undefined) {
           fetchAllGames().then((allGames) => {
