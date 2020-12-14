@@ -2,13 +2,13 @@
   "name": "firegamesbot",
   "version": "1.1.0",
   "description": "a telegram bot for searching video games in firegames",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "npm run build && NODE_ENV=production node dist/index.js",
     "serve": "node dist/index.js",
     "clean": "rimraf dist",
-    "dev": "npm run build && NODE_ENV=development nodemon --exec babel-node app/index.ts",
+    "dev": "NODE_ENV=development nodemon --exec ts-node app/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -68,6 +68,7 @@
     "babel-preset-minify": "0.5.1",
     "eslint": "7.15.0",
     "eslint-plugin-import": "2.22.1",
-    "rimraf": "3.0.2"
+    "rimraf": "3.0.2",
+    "ts-node": "9.1.1"
   }
 }
