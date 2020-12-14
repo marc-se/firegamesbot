@@ -109,7 +109,6 @@ const search = (bot: any) => {
   bot.hears(/^(?!.*🕹)/gim, (ctx: any) => {
     const userId = ctx.message.from.id.toString();
     if (isAuthorizedUser(userId)) {
-      // TODO: check if messageLength is working
       const messageLength = idx(ctx, (_) => _.message.text.length) || 0;
       if (messageLength < 3) {
         ctx.reply("Please search for at least 3 characters");
