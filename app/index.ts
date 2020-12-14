@@ -6,7 +6,7 @@ if (IS_DEV) {
   setInterval(() => {
     http
       .get(
-        `http://${process.env.HEROKU_APP_NAME}.herokuapp.com`,
+        `https://${process.env.HEROKU_APP_NAME}.herokuapp.com`,
         (res: any) => {
           const { statusCode } = res;
           let error;
