@@ -7,9 +7,10 @@ const database = firebase.database();
 const rootRef = firebase.database().ref();
 const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
+import type { GameReference, Game, System } from "../types";
 
 const fetchSystems = () => {
-  const systems = [];
+  const systems: System[] = [];
 
   return systemsRef
     .once("value", (snap) => {
@@ -22,12 +23,12 @@ const fetchSystems = () => {
     .then(() => systems);
 };
 
-function cleanupString(systemString) {
+function cleanupString(systemString: string) {
   return systemString.slice(0, -2).trim();
 }
 
-function replyWithSystemData(ctx, systems, bot) {
-  const games = [];
+function replyWithSystemData(ctx: any, systems: System[], bot: any) {
+  const games: Game[] = [];
 
   const cleanSystemString = cleanupString(ctx.match[0]);
   const requestedSystem = systems.find(
@@ -58,8 +59,8 @@ function replyWithSystemData(ctx, systems, bot) {
   }
 }
 
-const systems = (bot) => {
-  bot.command("/gamesbysystem", (ctx) => {
+const systems = (bot: any) => {
+  bot.command("/gamesbysystem", (ctx: any) => {
     const userId = ctx.message.from.id.toString();
     if (isAuthorizedUser(userId)) {
       fetchSystems().then((systems) => {
@@ -71,7 +72,7 @@ const systems = (bot) => {
           return `${system.url}`;
         });
 
-        bot.hears(/.*🕹/gim, (ctx) => {
+        bot.hears(/.*🕹/gim, (ctx: any) => {
           replyWithSystemData(ctx, systems, bot);
         });
 
