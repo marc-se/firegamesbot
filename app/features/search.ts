@@ -8,7 +8,7 @@ const gamesRef = rootRef.child("games");
 const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
-import type { GameReference, Game, System } from "../types";
+import type { GameReference, System } from "../types";
 
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
