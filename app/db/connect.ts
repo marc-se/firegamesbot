@@ -8,8 +8,8 @@ const firebaseConfig = {
   projectId: process.env.FIREBASE_PROJECT_ID,
   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  adminMail: process.env.ADMIN_MAIL,
-  adminPw: process.env.ADMIN_PW,
+  adminMail: process.env.ADMIN_MAIL || "",
+  adminPw: process.env.ADMIN_PW || "",
 };
 
 // Initialize Firebase

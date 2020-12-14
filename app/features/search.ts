@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/database";
+import idx from "idx";
 
 const database = firebase.database();
 const rootRef = firebase.database().ref();
@@ -7,19 +8,23 @@ const gamesRef = rootRef.child("games");
 const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
+import type { GameReference, System } from "../types";
+
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
 
-let systemKeys = [];
-let systemRefs = [];
-let gamesContainer = [];
+let systemKeys: string[] = [];
+let systemRefs: firebase.database.Reference[] = [];
+let gamesContainer: GameReference[] = [];
 
 const fetchAllGames = () =>
   gamesRef
     .once("value", (snap) => {
       snap.forEach((child) => {
         const { key } = child;
-        systemKeys.push(key);
+        if (key) {
+          systemKeys.push(key);
+        }
       });
     })
     .then(() => {
@@ -29,7 +34,7 @@ const fetchAllGames = () =>
       });
     })
     .then(() =>
-      Promise.all(gatherGames(systemRefs)).then((res) => {
+      Promise.all(gatherGames()).then((res) => {
         // cache all games for 5 minutes
         return gamesContainer;
       })
@@ -37,7 +42,7 @@ const fetchAllGames = () =>
 
 // TODO: put in utils function
 const fetchAllShortNames = () => {
-  let systems = [];
+  let systems: System[] = [];
   return systemsRef
     .once("value", (snap) => {
       const data = snap.val();
@@ -55,7 +60,9 @@ let gatherGames = () => {
       const data = snap.val();
       Object.keys(data).forEach((game) => {
         data[game].key = game;
-        gamesContainer.push({ title: data[game].title, parent: snap.key });
+        if (snap.key) {
+          gamesContainer.push({ title: data[game].title, parent: snap.key });
+        }
       });
     })
   );
@@ -63,7 +70,7 @@ let gatherGames = () => {
   return promises;
 };
 
-function getSearchResults(games, message) {
+function getSearchResults(games: GameReference[], message: string) {
   return games.filter((game) => {
     try {
       return game.title.toLowerCase().includes(message);
@@ -73,7 +80,7 @@ function getSearchResults(games, message) {
   });
 }
 
-function botReply(result, ctx) {
+function botReply(result: string[], ctx: any) {
   if (result.length > 0) {
     ctx.replyWithMarkdown(
       `FOUND *${result.length}* ${
@@ -85,22 +92,25 @@ function botReply(result, ctx) {
   }
 }
 
-function getGamesWithShortName(games, systems) {
-  let gamesWithShortName = [];
+function getGamesWithShortName(games: GameReference[], systems: System[]) {
+  let gamesWithShortName: string[] = [];
   games.map((game) => {
     const systemNode = systems.find((system) => system.url === game.parent);
-    gamesWithShortName.push(`- ${game.title} (${systemNode.alias})`);
+    if (systemNode && systemNode.alias) {
+      gamesWithShortName.push(`- ${game.title} (${systemNode.alias})`);
+    }
   });
   return gamesWithShortName;
 }
 
-const search = (bot) => {
-  bot.start((ctx) => ctx.reply("Welcome!"));
+const search = (bot: any) => {
+  bot.start((ctx: any) => ctx.reply("Welcome!"));
 
-  bot.hears(/^(?!.*🕹)/gim, (ctx) => {
+  bot.hears(/^(?!.*🕹)/gim, (ctx: any) => {
     const userId = ctx.message.from.id.toString();
     if (isAuthorizedUser(userId)) {
-      if ([ctx.message.text.length] < 3) {
+      const messageLength = idx(ctx, (_) => _.message.text.length) || 0;
+      if (messageLength < 3) {
         ctx.reply("Please search for at least 3 characters");
       } else {
         const { text } = ctx.message;
@@ -108,7 +118,7 @@ const search = (bot) => {
 
         const cachedGames = botCache.get("allGames");
         const cachedSystems = botCache.get("allSystems");
-        let searchResults = [];
+        let searchResults: GameReference[] = [];
 
         if (cachedGames == undefined || cachedSystems == undefined) {
           fetchAllGames().then((allGames) => {
