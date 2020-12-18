@@ -12,7 +12,7 @@ const getAllReferences = async (systemRef: firebase.database.Reference) => {
         data[node].key = node;
         const game = data[node];
         if (snap.key) {
-          gamesContainer.push({ title: game.title, parent: snap.key });
+          gamesContainer.push({ ...game, parent: snap.key });
         }
       });
     });
