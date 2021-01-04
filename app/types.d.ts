@@ -12,6 +12,7 @@ export type Game = {
   region: Region;
   playing: boolean;
   finished: boolean;
+  playtime?: number;
 };
 
 export type System = {
@@ -40,4 +41,5 @@ export type WishlistItem = {
 export type GameReference = {
   title: string;
   parent: string;
+  playtime?: number;
 };
