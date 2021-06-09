@@ -3,8 +3,8 @@ import "firebase/database";
 import idx from "idx";
 
 const database = firebase.database();
-const rootRef = firebase.database().ref();
-const gamesRef = rootRef.child("games");
+const rootRef = database.ref();
+//const gamesRef = rootRef.child("games");
 const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
@@ -102,7 +102,6 @@ const search = (bot: any) => {
           return;
         }
 
-        console.log("cache");
         searchResults = getSearchResults(cachedGames, message);
         let reply = getGamesWithShortName(searchResults, cachedSystems);
         botReply(reply, ctx);

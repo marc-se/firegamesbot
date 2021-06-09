@@ -1,4 +1,4 @@
-const Markup = require("telegraf/markup");
+const { Markup } = require("telegraf");
 
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 

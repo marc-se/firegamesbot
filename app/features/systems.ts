@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/database";
 
-const { Extra, Markup } = require("telegraf");
+const { Markup } = require("telegraf");
 
 const database = firebase.database();
 
@@ -40,11 +40,11 @@ const replyWithSystemData = (ctx: any, systems: System[]) => {
       .then(() => {
         ctx.replyWithMarkdown(
           `Here are your *${cleanSystemString}* Games 😘`,
-          Extra.markup(Markup.removeKeyboard())
+          Markup.removeKeyboard()
         );
         ctx.reply(
           `- ${games.toString().split(",").join("\n- ")}`,
-          Extra.markup(Markup.removeKeyboard())
+          Markup.removeKeyboard()
         );
       });
   }
@@ -66,7 +66,7 @@ const getSystemData = (ctx: any, bot: any) => {
 
           return ctx.reply(
             "Please select which games you would like to see 🕹",
-            Extra.markup(Markup.keyboard(systemTitles))
+            Markup.keyboard(systemTitles)
           );
         }
       })
