@@ -5,8 +5,22 @@ import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 import { fetchAllGames } from "../net/fetchAllGames";
 import type { GameReference } from "../types";
 
-const getReplyMessage = (games: GameReference[]) => {
+const getReplyMessage = (
+  games: GameReference[],
+  lowerInterval: number,
+  upperInterval: number
+) => {
   // TODO
+  let introMessage = "";
+  if (lowerInterval && upperInterval) {
+    introMessage = `Games between ${lowerInterval} and ${upperInterval} hours playtime:\n`;
+  } else if (lowerInterval <= 8) {
+    introMessage = `Games with less than ${lowerInterval} hours playtime:\n`;
+  } else {
+    introMessage = `Games with more than ${lowerInterval} hours playtime:\n`;
+  }
+
+  return `${introMessage}`;
 };
 
 const handlePlaytimeOption = (
@@ -25,30 +39,45 @@ const handlePlaytimeOption = (
         let filteredGames: GameReference[] = [];
 
         if (lowerInterval && upperInterval) {
+          console.log(lowerInterval, upperInterval);
           filteredGames = games.filter((game) => {
             game &&
               game.playtime &&
-              (game.playtime < lowerInterval || game.playtime > upperInterval);
+              !game.finished &&
+              !game.playing &&
+              game.playtime > lowerInterval &&
+              game.playtime < upperInterval;
           });
-          console.log("games with two intervals", filteredGames);
-
-          ctx.replyWithMarkdown(
-            `Games between ${lowerInterval} and ${upperInterval} hours playtime`
+        } else if (lowerInterval <= 8) {
+          filteredGames = games.filter(
+            (game) =>
+              game &&
+              game.playtime &&
+              !game.finished &&
+              !game.playing &&
+              game.playtime < lowerInterval
           );
-          return;
+        } else {
+          filteredGames = games.filter(
+            (game) =>
+              game &&
+              game.playtime &&
+              !game.finished &&
+              !game.playing &&
+              game.playtime > lowerInterval
+          );
         }
 
-        filteredGames = games.filter(
-          (game) =>
-            game &&
-            game.playtime &&
-            (game.playtime < lowerInterval || game.playtime > upperInterval)
+        const replyMessage = getReplyMessage(
+          filteredGames,
+          lowerInterval,
+          upperInterval
         );
 
-        console.log("games with one interval", filteredGames);
+        console.log("games ", filteredGames);
 
         // TODO: find suitable message
-        ctx.replyWithMarkdown(`Games with ${lowerInterval} hours playtime`);
+        ctx.replyWithMarkdown(replyMessage);
         return;
       }
     })
@@ -61,10 +90,10 @@ const getGamesByPlaytime = (ctx: any, bot: any) => {
     ctx.replyWithMarkdown(
       `*Choose an option*`,
       Markup.inlineKeyboard([
-        [Markup.callbackButton("playtime < 8h", "playtime_lt_8")],
-        [Markup.callbackButton("playtime > 8h < 20h", "playtime_gt_8_lt_20")],
-        [Markup.callbackButton("playtime > 20h", "playtime_gt_20h")],
-      ]).extra()
+        [Markup.button.callback("playtime < 8h", "playtime_lt_8")],
+        [Markup.button.callback("playtime > 8h < 20h", "playtime_gt_8_lt_20")],
+        [Markup.button.callback("playtime > 20h", "playtime_gt_20h")],
+      ])
     );
   }
 };

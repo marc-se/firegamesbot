@@ -38,8 +38,8 @@ export type WishlistItem = {
   title: string;
 };
 
-export type GameReference = {
-  title: string;
+export interface GameReference extends Game {
+  playtime: number;
+  key: string;
   parent: string;
-  playtime?: number;
-};
+}
