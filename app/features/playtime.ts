@@ -39,15 +39,16 @@ const handlePlaytimeOption = (
         let filteredGames: GameReference[] = [];
 
         if (lowerInterval && upperInterval) {
-          console.log(lowerInterval, upperInterval);
-          filteredGames = games.filter((game) => {
-            game &&
+          console.log(lowerInterval, upperInterval, games[1]);
+          filteredGames = games.filter(
+            (game) =>
+              game &&
               game.playtime &&
               !game.finished &&
               !game.playing &&
               game.playtime > lowerInterval &&
-              game.playtime < upperInterval;
-          });
+              game.playtime < upperInterval
+          );
         } else if (lowerInterval <= 8) {
           filteredGames = games.filter(
             (game) =>
@@ -73,8 +74,6 @@ const handlePlaytimeOption = (
           lowerInterval,
           upperInterval
         );
-
-        console.log("games ", filteredGames);
 
         // TODO: find suitable message
         ctx.replyWithMarkdown(replyMessage);
