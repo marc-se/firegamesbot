@@ -26,7 +26,7 @@ if (IS_DEV) {
         }
       )
       .on("error", function (err: any) {
-        console.log("Error: " + err.message);
+        console.error("Error: " + err.message);
       });
   }, 20 * 60 * 1000); // ping every 20 minutes
 }
