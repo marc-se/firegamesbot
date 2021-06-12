@@ -1,34 +1,20 @@
 import firebase from "firebase/app";
 import "firebase/database";
 
-const { Extra, Markup } = require("telegraf");
+const { Markup } = require("telegraf");
 
 const database = firebase.database();
-const rootRef = firebase.database().ref();
-const systemsRef = rootRef.child("systems");
+
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
-import type { GameReference, Game, System } from "../types";
-
-const fetchSystems = () => {
-  const systems: System[] = [];
-
-  return systemsRef
-    .once("value", (snap) => {
-      const data = snap.val();
-
-      Object.keys(data).forEach((system) => {
-        systems.push(data[system]);
-      });
-    })
-    .then(() => systems);
-};
+import { fetchSystems } from "../net/fetchSystems";
+import type { Game, System } from "../types";
 
 function cleanupString(systemString: string) {
   return systemString.slice(0, -2).trim();
 }
 
-function replyWithSystemData(ctx: any, systems: System[], bot: any) {
-  const games: Game[] = [];
+const replyWithSystemData = (ctx: any, systems: System[]) => {
+  const games: string[] = [];
 
   const cleanSystemString = cleanupString(ctx.match[0]);
   const requestedSystem = systems.find(
@@ -38,53 +24,60 @@ function replyWithSystemData(ctx: any, systems: System[], bot: any) {
   if (requestedSystem) {
     const systemRef = database.ref(`games/${requestedSystem.url}`);
 
-    const fetchGames = systemRef
+    systemRef
       .once("value", (snap) => {
         const data = snap.val();
-        Object.keys(data).forEach((game) => {
-          data[game].key = game;
-          games.push(data[game].title);
+        Object.keys(data).forEach((node) => {
+          data[node].key = node;
+          const game: Game = data[node];
+          const status =
+            game.playing || game.finished
+              ? `${game.playing ? "🕹" : ""}${game.finished ? "✅" : ""}`
+              : "🆕";
+          games.push(`${game.title} ${status}`);
         });
       })
       .then(() => {
         ctx.replyWithMarkdown(
           `Here are your *${cleanSystemString}* Games 😘`,
-          Extra.markup(Markup.removeKeyboard())
+          Markup.removeKeyboard()
         );
         ctx.reply(
           `- ${games.toString().split(",").join("\n- ")}`,
-          Extra.markup(Markup.removeKeyboard())
+          Markup.removeKeyboard()
         );
       });
   }
-}
+};
+
+const getSystemData = (ctx: any, bot: any) => {
+  const userId = ctx.message.from.id.toString();
+  if (isAuthorizedUser(userId)) {
+    fetchSystems()
+      .then((systems) => {
+        if (systems) {
+          const systemTitles = systems.map((system) => {
+            return `${system.title} 🕹`;
+          });
+
+          bot.hears(/.*🕹/gim, (ctx: any) => {
+            replyWithSystemData(ctx, systems);
+          });
+
+          return ctx.reply(
+            "Please select which games you would like to see 🕹",
+            Markup.keyboard(systemTitles)
+          );
+        }
+      })
+      .catch((error) => console.error("Systems Error", error));
+  } else {
+    ctx.reply("You're not an authorized user! 🙅🏼");
+  }
+};
 
 const systems = (bot: any) => {
-  bot.command("/gamesbysystem", (ctx: any) => {
-    const userId = ctx.message.from.id.toString();
-    if (isAuthorizedUser(userId)) {
-      fetchSystems().then((systems) => {
-        const systemTitles = systems.map((system) => {
-          return `${system.title} 🕹`;
-        });
-
-        const systemUrls = systems.map((system) => {
-          return `${system.url}`;
-        });
-
-        bot.hears(/.*🕹/gim, (ctx: any) => {
-          replyWithSystemData(ctx, systems, bot);
-        });
-
-        return ctx.reply(
-          "Please select which games you would like to see 🕹",
-          Extra.markup(Markup.keyboard(systemTitles))
-        );
-      });
-    } else {
-      ctx.reply("You're not an authorized user! 🙅🏼");
-    }
-  });
+  bot.command("/gamesbysystem", (ctx: any) => getSystemData(ctx, bot));
 };
 
 export default systems;
