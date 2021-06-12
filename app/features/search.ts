@@ -1,33 +1,15 @@
-import firebase from "firebase/app";
 import "firebase/database";
 import idx from "idx";
 
-const database = firebase.database();
-const rootRef = database.ref();
-//const gamesRef = rootRef.child("games");
-const systemsRef = rootRef.child("systems");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
 import { fetchAllGames } from "../net/fetchAllGames";
+import { fetchSystems } from "../net/fetchSystems";
 
 import type { GameReference, System } from "../types";
 
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
-
-// TODO: put in utils function
-const fetchAllShortNames = () => {
-  let systems: System[] = [];
-  return systemsRef
-    .once("value", (snap) => {
-      const data = snap.val();
-
-      Object.keys(data).forEach((system) => {
-        systems.push(data[system]);
-      });
-    })
-    .then(() => systems);
-};
 
 function getSearchResults(games: GameReference[], message: string) {
   return games.filter((game) => {
@@ -51,7 +33,7 @@ function botReply(result: string[], ctx: any) {
   }
 }
 
-function getGamesWithShortName(games: GameReference[], systems: System[]) {
+function getGamesWithShortName(games: GameReference[], systems: System[] = []) {
   let gamesWithShortName: string[] = [];
   games.map((game) => {
     const systemNode = systems.find((system) => system.url === game.parent);
@@ -87,7 +69,7 @@ const search = (bot: any) => {
                 const nestedGames: GameReference[][] = res;
                 const games = ([] as GameReference[]).concat(...nestedGames);
                 searchResults = getSearchResults(games, message);
-                fetchAllShortNames().then((systems) => {
+                fetchSystems().then((systems) => {
                   botCache.set("allSystems", systems);
                   // add system shortname for each game found to bot reply
                   let reply = getGamesWithShortName(searchResults, systems);

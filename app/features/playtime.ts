@@ -3,14 +3,20 @@ const { Markup } = require("telegraf");
 import { isAuthorizedUser } from "../utils/isAuthorizedUser";
 
 import { fetchAllGames } from "../net/fetchAllGames";
-import { fetchSystemShortNames } from "../net/fetchSystemShortNames";
+import { fetchSystems } from "../net/fetchSystems";
 import type { GameReference, System } from "../types";
 
 const NodeCache = require("node-cache");
 const botCache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
 
-// TODO: cache all fetched games (unfiltered)
-
+/**
+ * get reply message for playtime results
+ * @param games
+ * @param systems
+ * @param lowerInterval
+ * @param upperInterval
+ * @returns
+ */
 const getReplyMessage = (
   games: GameReference[],
   systems: System[] = [],
@@ -69,54 +75,81 @@ const getReplyMessage = (
   return [`${introMessage}${replyMessage}`];
 };
 
+/**
+ * filter games by playtime
+ * @param lowerInterval
+ * @param upperInterval
+ * @param games
+ * @returns
+ */
+const filterGamesByPlaytime = (
+  lowerInterval: number,
+  upperInterval: number,
+  games: GameReference[]
+) => {
+  let filteredGames: GameReference[] = [];
+  if (lowerInterval && upperInterval) {
+    filteredGames = games.filter(
+      (game) =>
+        game &&
+        game.playtime &&
+        !game.finished &&
+        !game.playing &&
+        game.playtime > lowerInterval &&
+        game.playtime < upperInterval
+    );
+    return filteredGames;
+  } else if (lowerInterval <= 8) {
+    filteredGames = games.filter(
+      (game) =>
+        game &&
+        game.playtime &&
+        !game.finished &&
+        !game.playing &&
+        game.playtime < lowerInterval
+    );
+    return filteredGames;
+  } else {
+    filteredGames = games.filter(
+      (game) =>
+        game &&
+        game.playtime &&
+        !game.finished &&
+        !game.playing &&
+        game.playtime > lowerInterval
+    );
+    return filteredGames;
+  }
+};
+
 const handlePlaytimeOption = (
   ctx: any,
   lowerInterval: number = 0,
   upperInterval: number = 0
 ) => {
-  fetchAllGames()
-    .then((res) => {
-      if (res) {
-        // @ts-ignore
-        const nestedGames: GameReference[][] = res;
-        const games = ([] as GameReference[]).concat(...nestedGames);
-        let filteredGames: GameReference[] = [];
+  const cachedGames = botCache.get("allGames");
+  const cachedSystems = botCache.get("allSystems");
 
-        if (lowerInterval && upperInterval) {
-          console.log(lowerInterval, upperInterval, games[1]);
-          filteredGames = games.filter(
-            (game) =>
-              game &&
-              game.playtime &&
-              !game.finished &&
-              !game.playing &&
-              game.playtime > lowerInterval &&
-              game.playtime < upperInterval
-          );
-        } else if (lowerInterval <= 8) {
-          filteredGames = games.filter(
-            (game) =>
-              game &&
-              game.playtime &&
-              !game.finished &&
-              !game.playing &&
-              game.playtime < lowerInterval
-          );
-        } else {
-          filteredGames = games.filter(
-            (game) =>
-              game &&
-              game.playtime &&
-              !game.finished &&
-              !game.playing &&
-              game.playtime > lowerInterval
-          );
-        }
+  let filteredGames: GameReference[] = [];
 
-        const cachedSystems = botCache.get("allSystems");
+  if (cachedGames == undefined || cachedSystems == undefined) {
+    fetchAllGames()
+      .then((res) => {
+        if (res) {
+          // @ts-ignore
+          const nestedGames: GameReference[][] = res;
+          const games = ([] as GameReference[]).concat(...nestedGames);
+          let filteredGames: GameReference[] = [];
 
-        if (cachedSystems == undefined) {
-          fetchSystemShortNames().then((systems) => {
+          botCache.set("allGames", games);
+
+          filteredGames = filterGamesByPlaytime(
+            lowerInterval,
+            upperInterval,
+            games
+          );
+
+          fetchSystems().then((systems) => {
             botCache.set("allSystems", systems);
             const replyMessage = getReplyMessage(
               filteredGames,
@@ -129,22 +162,34 @@ const handlePlaytimeOption = (
           });
           return;
         }
+      })
+      .catch((error) => console.error("Playtime Error", error));
+    return;
+  }
 
-        const replyMessage = getReplyMessage(
-          filteredGames,
-          cachedSystems,
-          lowerInterval,
-          upperInterval
-        );
+  filteredGames = filterGamesByPlaytime(
+    lowerInterval,
+    upperInterval,
+    cachedGames
+  );
 
-        replyMessage.forEach((reply) => ctx.replyWithMarkdown(reply));
+  const replyMessage = getReplyMessage(
+    filteredGames,
+    cachedSystems,
+    lowerInterval,
+    upperInterval
+  );
 
-        return;
-      }
-    })
-    .catch((error) => console.error("Playtime Error", error));
+  replyMessage.forEach((reply) => ctx.replyWithMarkdown(reply));
+
+  return;
 };
 
+/**
+ * bot user prompt for playtime options
+ * @param ctx
+ * @param bot
+ */
 const getGamesByPlaytime = (ctx: any, bot: any) => {
   const userId = ctx.message.from.id.toString();
   if (isAuthorizedUser(userId)) {
